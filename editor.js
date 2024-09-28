@@ -17,39 +17,36 @@ class FloatExporter {
 				this.audioData = new Float32Array(array)
 			},
 			speed: (multiplier, interpolate = false) => {
-				const array = [...this.audioData]
-				let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)))
+				const array = [...this.audioData];
+				const newLength = Math.ceil(array.length * (1 / multiplier));
+				let changedArray = new Float32Array(newLength);
 				if (multiplier !== 1) {
 					if (multiplier >= array.length) {
-						console.warn("The audio will be practically unhearable if it's multiplier is bigger than the audio's buffer size. Returning an empty buffer now.")
-						this.audioData = new Float32Array([])
-						return
+						console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
+						this.audioData = new Float32Array([]);
+						return;
 					} else if (multiplier <= 0) {
-						console.warn("The audio module would freeze if the multiplier is ≤ 0. Did you mean to use", multiplier * -1, "for the multiplier instead?")
-						return
+						console.warn("The audio module would freeze if the multiplier is ≤ 0. Did you mean to use", multiplier * -1, "for the multiplier instead?");
+						return;
 					}
-					let j = 0
 					if (interpolate) {
-						let f, e
-						for (let i = 0; i < changedArray.length; i += multiplier) {
-							f = i % 1
-							e = Math.round(i)
-							if (f === 0) {
-								changedArray[e] = array[j]
-							} else {
-								const prev = (array[e - 1] || 0) * (1 - f), next = (array[e + 1] || 0) * f
-								changedArray[e] = (prev + next) / 2
-							}
-							j++
+						for (let i = 0; i < newLength; i++) {
+							const sampleIndex = i * multiplier;
+							const indexA = Math.floor(sampleIndex);
+							const indexB = Math.ceil(sampleIndex);
+							const valueA = array[indexA] || 0;
+							const valueB = array[indexB] || 0;
+							const weightB = sampleIndex - indexA;
+							const weightA = 1 - weightB;
+							changedArray[i] = (valueA * weightA) + (valueB * weightB);
 						}
 					} else {
-						for (let i = 0; i < changedArray.length; i += multiplier) {
-							changedArray[Math.round(i)] = array[j]
-							j++
+						for (let i = 0; i < newLength; i++) {
+							changedArray[i] = array[Math.round(i * multiplier)] || 0;
 						}
 					}
-					this.audioData = new Float32Array(changedArray)
 				}
+				this.audioData = changedArray;
 			}
 		}
 	}
