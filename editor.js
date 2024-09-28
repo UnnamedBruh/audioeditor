@@ -37,7 +37,7 @@ class FloatExporter {
 							if (f === 0) {
 								changedArray[e] = array[j]
 							} else {
-								const prev = (changedArray[e - 1] || 0) * (1 - f), next = (changedArray[e + 1] || 0) * f
+								const prev = (array[e - 1] || 0) * (1 - f), next = (array[e + 1] || 0) * f
 								changedArray[e] = (prev + next) / 2
 							}
 							j++
