@@ -16,10 +16,9 @@ class FloatExporter {
 				}
 				this.audioData = new Float32Array(array)
 			},
-			speed: (multiplier, interpolate = false) => {
+			speed: multiplier => {
 				const array = [...this.audioData];
-				const newLength = Math.ceil(array.length * (1 / multiplier));
-				let changedArray = new Float32Array(newLength);
+				let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)));
 				if (multiplier !== 1) {
 					if (multiplier >= array.length) {
 						console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
@@ -29,21 +28,8 @@ class FloatExporter {
 						console.warn("The audio module would freeze if the multiplier is ≤ 0. Did you mean to use", multiplier * -1, "for the multiplier instead?");
 						return;
 					}
-					if (interpolate) {
-						for (let i = 0; i < newLength; i++) {
-							const sampleIndex = i * multiplier;
-							const indexA = Math.floor(sampleIndex);
-							const indexB = Math.ceil(sampleIndex);
-							const valueA = array[indexA] || 0;
-							const valueB = array[indexB] || 0;
-							const weightB = sampleIndex - indexA;
-							const weightA = 1 - weightB;
-							changedArray[i] = (valueA * weightA) + (valueB * weightB);
-						}
-					} else {
-						for (let i = 0; i < newLength; i++) {
-							changedArray[i] = array[Math.round(i * multiplier)] || 0;
-						}
+					for (let i = 0; i < newLength; i++) {
+						changedArray[i] = array[Math.round(i * multiplier)] || 0;
 					}
 				}
 				this.audioData = changedArray;
