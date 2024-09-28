@@ -1,5 +1,5 @@
 class FloatExporter {
-	constructor(audioData = new Float32Array([]), sampleRate = 48000, modern = false) {
+	constructor(audioData = new Float32Array([]), sampleRate = 48000) {
 		if (!(audioData instanceof Float32Array)) {
 			console.error("Input must be a Float32Array.");
 			this.audioData = new Float32Array([]);
@@ -10,7 +10,11 @@ class FloatExporter {
 		this.backupData = new Float32Array(this.audioData);
 		this.FX = {
 			gain: multiplier => {
-				this.audioData = new Float32Array([...this.audioData].map(i => i * multiplier))
+				const array = [...this.audioData]
+				for (let i = 0; i < array.length; i++) {
+					array[i] *= multiplier
+				}
+				this.audioData = new Float32Array(array)
 			},
 			speed: (multiplier, interpolate = false) => {
 				const array = [...this.audioData]
@@ -34,7 +38,7 @@ class FloatExporter {
 								changedArray[e] = array[j]
 							} else {
 								const prev = (changedArray[e - 1] || 0) * (1 - f), next = (changedArray[e + 1] || 0) * f
-								changedArray[e] = prev + (array[j] / 2) + next
+								changedArray[e] = (prev + next) / 2
 							}
 							j++
 						}
