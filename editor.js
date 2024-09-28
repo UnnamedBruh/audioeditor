@@ -28,7 +28,7 @@ class FloatExporter {
 						console.warn("The audio module would freeze if the multiplier is ≤ 0. Did you mean to use", multiplier * -1, "for the multiplier instead?");
 						return;
 					}
-					for (let i = 0; i < newLength; i++) {
+					for (let i = 0; i < changedArray.length; i++) {
 						changedArray[i] = array[Math.round(i * multiplier)] || 0;
 					}
 				}
