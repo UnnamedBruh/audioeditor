@@ -30,7 +30,7 @@ class FloatExporter {
 					}
 					let j = 0
 					if (interpolate) {
-						let d, e
+						let f, e
 						for (let i = 0; i < changedArray.length; i += multiplier) {
 							f = i % 1
 							e = Math.round(i)
