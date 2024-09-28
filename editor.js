@@ -48,6 +48,7 @@ class FloatExporter {
 							j++
 						}
 					}
+					this.audioData = new Float32Array(changedArray)
 				}
 			}
 		}
