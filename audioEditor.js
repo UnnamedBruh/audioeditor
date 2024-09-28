@@ -30,6 +30,9 @@ document.getElementById('applyEffects').addEventListener('click', function() {
         const wavBlob = exporter.convertToWav('blob');
         const audioUrl = URL.createObjectURL(wavBlob);
         const audioPlayer = document.getElementById('audioPlayer');
+        if (audioPlayer.src) {
+            URL.revokeObjectURL(audioPlayer.src)
+        }
         audioPlayer.src = audioUrl;
         audioPlayer.play();
     } else {
