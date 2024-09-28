@@ -17,9 +17,9 @@ class FloatExporter {
 				this.audioData = new Float32Array(array)
 			},
 			speed: multiplier => {
-				const array = [...this.audioData];
-				let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)));
 				if (multiplier !== 1) {
+					const array = [...this.audioData];
+					let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)));
 					if (multiplier >= array.length) {
 						console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
 						this.audioData = new Float32Array([]);
@@ -31,8 +31,8 @@ class FloatExporter {
 					for (let i = 0; i < changedArray.length; i++) {
 						changedArray[i] = array[Math.round(i * multiplier)] || 0;
 					}
+					this.audioData = changedArray;
 				}
-				this.audioData = changedArray;
 			}
 		}
 	}
