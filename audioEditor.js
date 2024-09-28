@@ -1,45 +1,53 @@
-let audioContext;
-let audioBuffer;
 let exporter;
 
-// Load audio data from file
-document.getElementById('audioUpload').addEventListener('change', async (event) => {
+// Load audio file
+document.getElementById('audioUpload').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
-        const arrayBuffer = await file.arrayBuffer();
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-        // Convert audio buffer to Float32Array
-        const floatData = new Float32Array(audioBuffer.getChannelData(0));
-        exporter = new FloatExporter(floatData, audioContext.sampleRate);
-
-        // Load audio into the player
-        document.getElementById('audioPlayer').src = URL.createObjectURL(file);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioContext.decodeAudioData(e.target.result, (buffer) => {
+                const audioData = new Float32Array(buffer.getChannelData(0)); // Assuming mono audio
+                exporter = new FloatExporter(audioData, buffer.sampleRate);
+                console.log("Audio loaded.");
+            });
+        };
+        reader.readAsArrayBuffer(file);
     }
 });
 
-// Apply effects to the audio
-document.getElementById('applyEffects').addEventListener('click', () => {
-    const gainValue = parseFloat(document.getElementById('gain').value);
-    const speedMultiplier = parseFloat(document.getElementById('speed').value);
-    const interpolate = document.getElementById('interpolate').checked;
+// Apply effects
+document.getElementById('applyEffects').addEventListener('click', function() {
+    if (exporter) {
+        const gainValue = parseFloat(document.getElementById('gainSlider').value);
+        const speedValue = parseFloat(document.getElementById('speedSlider').value);
+        
+        exporter.FX.gain(gainValue);
+        exporter.FX.speed(speedValue, true);
 
-    exporter.FX.gain(gainValue);
-    exporter.FX.speed(speedMultiplier, interpolate);
+        // Update the audio player
+        const wavBlob = exporter.convertToWav('blob');
+        const audioUrl = URL.createObjectURL(wavBlob);
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = audioUrl;
+        audioPlayer.play();
+    } else {
+        alert("Please upload an audio file first.");
+    }
 });
 
-// Download the processed audio as WAV
-document.getElementById('downloadWav').addEventListener('click', () => {
+// Download WAV file
+document.getElementById('downloadWav').addEventListener('click', function() {
     if (exporter) {
-        const wavBlob = exporter.convertToWav("blob");
+        const wavBlob = exporter.convertToWav('blob');
         const url = URL.createObjectURL(wavBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'processed_audio.wav';
+        a.download = 'modified-audio.wav';
         a.click();
         URL.revokeObjectURL(url);
     } else {
-        alert('Please upload an audio file first.');
+        alert("Please upload an audio file first.");
     }
 });
