@@ -22,7 +22,7 @@ class FloatExporter {
 				return true
 			},
 			speed: multiplier => {
-				if (multiplier === 1) {
+				if (multiplier === 1 || multiplier === -1) {
 					return false;
 				} else {
 					let len = this.audioData.length;
@@ -30,7 +30,9 @@ class FloatExporter {
 						console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
 						this.audioData = new Float32Array([]);
 						return false;
-					} else if (multiplier <= 0) {
+					} else if (multiplier === 0) {
+						throw new Error("Prevented an infinite loop and a memory overflow, due to how the audio is processed.");
+					} else if (multiplier < 0) {
 						multiplier *= -1
 						console.warn("The module would crash and the audio will be reversed if the multiplier would be ≤ 0. Did you mean to use", multiplier, "for the multiplier instead?");
 					}
