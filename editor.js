@@ -106,7 +106,7 @@ class FloatExporter {
 		let offset = 44, s;
 		for (let i = 0; i !== len; i++) {
 			s = Math.max(ch4, Math.min(ch5, this.audioData[i]));
-			view.setInt16(offset, s < 0 ? s * ch2 : s * ch1, true);
+			view.setInt16(offset, s < ch3 ? s * ch2 : s * ch1, true);
 			offset += 2;
 		}
 		return exp === "blob" ? new Blob([view], { type: 'audio/wav' }) : exp === "dataview" ? view : undefined;
