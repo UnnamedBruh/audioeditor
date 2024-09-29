@@ -124,8 +124,8 @@ var FloatExporter = (function() {
 					const leng = Math.ceil(len / 2)
 					if (leng === 1) return false;
 					const changedArray = new Float32Array();
-					len = changedArray.length
-					let j = 0
+					len = changedArray.length;
+					let j = 0;
 					for (let i = 0; i !== len; i++) {
 						changedArray[i] = (this.audioData[j] + this.audioData[j + 1]) / 2;
 						j += 2
