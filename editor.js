@@ -35,7 +35,7 @@ class FloatExporter {
 						return;
 					}
 					for (let i = 0; i < changedArray.length; i++) {
-						changedArray[i] = array[Math.round(i * multiplier)] || 0;
+						changedArray[i] = array[Math.floor(i * multiplier)] || 0;
 					}
 					this.audioData = changedArray;
 				}
