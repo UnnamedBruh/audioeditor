@@ -119,31 +119,20 @@ var FloatExporter = (function() {
 					}
 					return "effect can be used after warning";
 				},
-				doubleSpeed: () => {
-					isNumber("The speed multiplier", multiplier)
-					if (multiplier === 1 || multiplier === -1) {
-						return false;
-					} else {
-						let len = this.audioData.length;
-						if (multiplier >= len) {
-							console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
-							this.audioData = new Float32Array([]);
-							return false;
-						} else if (multiplier === 0) {
-							throw new Error("Prevented an infinite loop and a memory overflow, due to how the audio is processed.");
-						} else if (multiplier < 0) {
-							multiplier *= -1
-							console.warn("The module would crash and the audio will be reversed if the multiplier would be ≤ 0. Did you mean to use", multiplier, "for the multiplier instead?");
-						}
-						const changedArray = new Float32Array(Math.ceil(this.audioData.length * (1 / multiplier)));
-						len = changedArray.length
-						for (let i = 0; i !== len; i++) {
-							changedArray[i] = this.audioData[Math.floor(i * multiplier)];
-						}
-						this.audioData = changedArray;
-						return true;
+				doubleSpeed_: () => {
+					let len = this.audioData.length;
+					const leng = Math.ceil(len / 2)
+					if (leng === 1) return false;
+					const changedArray = new Float32Array();
+					len = changedArray.length
+					let j = 0
+					for (let i = 0; i !== len; i++) {
+						changedArray[i] = (this.audioData[j] + this.audioData[j + 1]) / 2;
+						j += 2
 					}
-				},
+					this.audioData = changedArray;
+					return true;
+				}
 			}
 		}
 		convertToWav(exp = "blob") {
@@ -195,7 +184,7 @@ var FloatExporter = (function() {
 					case "fx gain":
 						console.log("{FloatExporter Class}.FX.gain multiplies the audio's volume by a single parameter:\n- multiplier: The multiplier that is used to multiply the audio's volume. For example, 0.5 halfens the audio's volume, while 2 doubles the audio's volume.\nWARNING: Keep in mind that very high values may result in distorted and extremely loud sound!")
 						break
-					case "fx gain":
+					case "fx speed":
 						console.log("{FloatExporter Class}.FX.speed divides the audio's sound duration, and multiplies the audio's pitch by a single parameter:\n- multiplier: The multiplier that is used to speed up or slow down the audio. For example, 0.5 slows down the audio, while 2 speeds up the audio.\nNOTE: Applying multiple of this effect would result in slightly choppy/pixely audio!\nWARNING: Keep in mind that very low values result in very long sound!")
 						break
 					case "fx distort":
@@ -207,11 +196,14 @@ var FloatExporter = (function() {
 					case "fx quantize":
 						console.log("{FloatExporter Class}.FX.quantize uses a single parameter to limit the data to (bits ** 4) possible values:\n- bits: The value to limit the possible values in. For example, 16 results in slightly staticy audio, while 4 results in very staticy audio.\nWARNING: This effect is irreversible, and can limit the ability to understand the audio!")
 						break
+					case "fx doubleSpeed":
+						console.log("{FloatExporter Class}.FX.doubleSpeed_ speeds up the audio without changing the pitch. This works, but this isn't for serious use!\nNOTE: This is resource-intensive, because of the process of summing two values at a time and normalizing them!")
+						break
 					default:
 						console.warn("This directory doesn't exist yet. Perhaps it may get added soon.")
 				}
 			} else {
-				console.log("This function is supposed to help you understand how the module works, and how the effects are applied to the module. Here are all of the possible values that can be achieved:\n- 'fx gain'\n- 'fx speed'\n- 'fx distort'\n- fx quantize\n- 'fx reduceFrequency'\n- fx 'doubleSpeed'")
+				console.log("This function is supposed to help you understand how the module works, and how the effects are applied to the module. Here are all of the possible values that can be achieved:\n- 'fx gain'\n- 'fx speed'\n- 'fx distort'\n- 'fx quantize'\n- 'fx reduceFrequency'\n- 'fx doubleSpeed'")
 			}
 		}
 	}
