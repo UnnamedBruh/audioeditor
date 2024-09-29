@@ -1,12 +1,25 @@
 class FloatExporter {
 	constructor(audioData = new Float32Array([]), sampleRate = 48000) {
 		if (!(audioData instanceof Float32Array)) {
-			console.error("Input must be a Float32Array.");
+			console.warn("The audioData must be a Float32Array. Otherwise, the audio data is automatically empty");
 			this.audioData = new Float32Array([]);
 		} else {
 			this.audioData = audioData;
 		}
-		this.sampleRate = sampleRate;
+		if (typeof sampleRate !== "number") {
+			console.warn("The sample rate must be a number, not a '" + (typeof sampleRate) + "'")
+			sampleRate = 48000;
+		} else {
+			if (sampleRate === 0) {
+				console.warn("The sample rate must not be 0, which this problem unsolved can cause infinitely long audio")
+				sampleRate = 48000;
+			}
+			if (sampleRate < 0) console.warn("The sample rate cannot be ≤ 0, though this case is handled")
+		}
+		if (sampleRate % 1 !== 0) {
+			console.warn("The sample rate isn't rounded, but this case is handled")
+		}
+		this.sampleRate = Math.abs(Math.round(sampleRate));
 		this.backupData = new Float32Array(this.audioData);
 		this.FX = {
 			gain: multiplier => {
@@ -101,5 +114,13 @@ class FloatExporter {
 		for (let i = 0; i < string.length; i++) {
 			view.setUint8(offset + i, string.charCodeAt(i));
 		}
+	}
+	static sineWave(frequency, duration, sampleRate) {
+		const array = new Float32Array(Math.floor(duration * sampleRate))
+		const len = array.length, cache = 2 * Math.PI
+		for (let i = 0; i !== len; i++) {
+			array[i] = Math.sin((cache * frequency * i) / sampleRate)
+		}
+		return new FloatExporter(array, sampleRate)
 	}
 }
