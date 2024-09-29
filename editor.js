@@ -85,15 +85,21 @@ class FloatExporter {
 			},
 			reduceFrequency: _ => {
 				console.warn("This effect can be computationally slower than other methods! You can use it anyway after this warning, though")
-				this.FX.reduceFrequency  = sample => {
+				this.FX.reduceFrequency = sample => {
+					if (sample > 0 && sample <= 1) {
+						console.warn("The sample input must not be ≤ 1. Otherwise, the audio will not be affected very well")
+						return false
+					} else if (sample <= 0) {
+						throw new Error("The sample is ≤ 0, which can cause an infinite loop for the 'reduceFrequency' effect, and potentially cause a memory overflow (reversing the audio infinitely)")
+					}
 					const de = this.audioData.length;
-					if (de === 0 || de === 1 || sample === 0 || sample === 1) return false;
-					const s = sample - 1
-					let c;
+					if (de === 1 || de === 0) return false;
+					const s = Math.ceil(sample) - 1
+					let c, e;
 					for (let j = 0; j < de; j += sample) {
-						c = this.audioData[j];
+						c = this.audioData[(e = Math.floor(j))];
 						for (let i = 0; i !== s && i + j < de; i++) {
-							this.audioData[i + j] = c;
+							this.audioData[i + e] = c;
 						}
 					}
 					return true;
