@@ -25,6 +25,9 @@ document.getElementById('applyEffects').addEventListener('click', function() {
         
         exporter.FX.gain(gainValue);
         exporter.FX.speed(speedValue, true);
+        if (document.getElementById("distort").checked) {
+            exporter.FX.distort();
+        }
 
         // Update the audio player
         const wavBlob = exporter.convertToWav('blob');
