@@ -86,7 +86,7 @@ class FloatExporter {
 		}
 	}
 	convertToWav(exp = "blob") {
-		const numChannels = 1;
+		const numChannels = 1, ch1 = 32767, ch2 = 32758, ch3 = 0, ch4 = -1, ch5 = 1;
 		const buffer = new ArrayBuffer(44 + this.audioData.length * 2);
 		const view = new DataView(buffer);
 		this.writeString(view, 0, 'RIFF');
@@ -103,9 +103,10 @@ class FloatExporter {
 		this.writeString(view, 36, 'data');
 		view.setUint32(40, this.audioData.length * 2, true);
 		let offset = 44, s;
-		for (let i = 0; i < this.audioData.length; i++) {
-			s = Math.max(-1, Math.min(1, this.audioData[i]));
-			view.setInt16(offset, s < 0 ? s * 32768 : s * 32767, true);
+		const len = this.audioData.length;
+		for (let i = 0; i !== len; i++) {
+			s = Math.max(ch4, Math.min(ch5, this.audioData[i]));
+			view.setInt16(offset, s < 0 ? s * ch2 : s * ch2, true);
 			offset += 2;
 		}
 		return exp === "blob" ? new Blob([view], { type: 'audio/wav' }) : exp === "dataview" ? view : undefined;
