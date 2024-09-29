@@ -10,6 +10,12 @@ class FloatExporter {
 		this.backupData = new Float32Array(this.audioData);
 		this.FX = {
 			gain: multiplier => {
+				if (multiplier === 1) {
+					return
+				} else if (multiplier === 0) {
+					this.audioData = new Float32Array(this.audioData.length)
+					return
+				}
 				const array = [...this.audioData]
 				for (let i = 0; i < array.length; i++) {
 					array[i] *= multiplier
