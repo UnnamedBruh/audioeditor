@@ -119,13 +119,13 @@ var FloatExporter = (function() {
 					}
 					return "effect can be used after warning";
 				},
-				doubleSpeed_: () => {
+				doubleSpeed: () => {
 					let len = this.audioData.length;
-					const leng = Math.ceil(len / 2)
+					const leng = Math.ceil(len / 2);
 					if (leng === 1) return false;
-					const changedArray = new Float32Array(len);
-					len = changedArray.length;
-					let j = 0;
+					const changedArray = new Float32Array(leng);
+					len = changedArray.length
+					let j = 0
 					for (let i = 0; i !== len; i++) {
 						changedArray[i] = (this.audioData[j] + this.audioData[j + 1]) / 2;
 						j += 2
@@ -136,7 +136,7 @@ var FloatExporter = (function() {
 			}
 		}
 		convertToWav(exp = "blob") {
-			const numChannels = 1, ch1 = 32767, ch2 = 32758, ch3 = 0, ch4 = -1, ch5 = 1, len = this.audioData.length;
+			const numChannels = 1, ch1 = 32767, ch2 = 32768, ch3 = 0, ch4 = -1, ch5 = 1, len = this.audioData.length;
 			const len2 = len * 2;
 			const buffer = new ArrayBuffer(44 + len2);
 			const view = new DataView(buffer);
@@ -197,7 +197,7 @@ var FloatExporter = (function() {
 						console.log("{FloatExporter Class}.FX.quantize uses a single parameter to limit the data to (bits ** 4) possible values:\n- bits: The value to limit the possible values in. For example, 16 results in slightly staticy audio, while 4 results in very staticy audio.\nWARNING: This effect is irreversible, and can limit the ability to understand the audio!")
 						break
 					case "fx doubleSpeed":
-						console.log("{FloatExporter Class}.FX.doubleSpeed_ speeds up the audio without changing the pitch. This works, but this isn't for serious use!\nNOTE: This is resource-intensive, because of the process of summing two values at a time and normalizing them!")
+						console.log("{FloatExporter Class}.FX.doubleSpeed multiplies the audio's speed by 2, but averages two values at a time. This is an alternative to {FloatExporter Class}.FX.speed(2).\nNOTE: This is slightly resource-intensive, because of the process of summing two values at a time and normalizing them!")
 						break
 					default:
 						console.warn("This directory doesn't exist yet. Perhaps it may get added soon.")
