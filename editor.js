@@ -10,23 +10,26 @@ class FloatExporter {
 		this.backupData = new Float32Array(this.audioData);
 		this.FX = {
 			gain: multiplier => {
-				if (multiplier === 1) return;
+				if (multiplier === 1) return false;
 				if (multiplier === 0) {
 					this.audioData.fill(0)
-					return
+					return false;
 				}
 				const de = this.audioData.length
 				for (let i = 0; i !== de; i++) {
 					this.audioData[i] *= multiplier
 				}
+				return true
 			},
 			speed: multiplier => {
-				if (multiplier !== 1) {
-					let len = this.audioData.length
+				if (multiplier === 1) {
+					return false;
+				} else {
+					let len = this.audioData.length;
 					if (multiplier >= len) {
 						console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
 						this.audioData = new Float32Array([]);
-						return;
+						return false;
 					} else if (multiplier <= 0) {
 						multiplier *= -1
 						console.warn("The module would crash and the audio will be reversed if the multiplier would be ≤ 0. Did you mean to use", multiplier, "for the multiplier instead?");
@@ -37,19 +40,33 @@ class FloatExporter {
 						changedArray[i] = this.audioData[Math.floor(i * multiplier)];
 					}
 					this.audioData = changedArray;
+					return true;
 				}
 			},
 			distort: () => {
 				const de = this.audioData.length;
+				if (de === 0) return false;
+				if (de === 1) {
+					this.audioData[0] = Math.tanh(this.audioData[0])
+					return true;
+				}
 				for (let i = 0; i !== de; i++) {
 					this.audioData[i] = Math.tanh(this.audioData[i]);
 				}
+				return true;
 			},
 			quantize: bits => {
-				const step = Math.pow(2, -bits), de = this.audioData.length;
+				const de = this.audioData.length;
+				if (de === 0) return false;
+				const step = Math.pow(2, -bits);
+				if (de === 1) {
+					this.audioData[0] = Math.round(this.audioData[0] / step) * step;
+					return true;
+				}
 				for (let i = 0; i !== de; i++) {
 					this.audioData[i] = Math.round(this.audioData[i] / step) * step;
 				}
+				return true;
 			}
 		}
 	}
