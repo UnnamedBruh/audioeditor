@@ -82,6 +82,23 @@ class FloatExporter {
 					this.audioData[i] = Math.round(this.audioData[i] / step) * step;
 				}
 				return true;
+			},
+			linearize: _ => {
+				console.warn("This effect can be computationally slower than other methods! You can use it anyway after this warning, though")
+				this.FX.linearize = sample => {
+					const de = this.audioData.length;
+					if (de === 0 || de === 1 || sample === 0 || sample === 1) return false;
+					const s = sample - 1
+					let c;
+					for (let j = 0; j < de; j += sample) {
+						c = this.audioData[j];
+						for (let i = 0; i !== s && i + j < de; i++) {
+							this.audioData[i + j] = c;
+						}
+					}
+					return true;
+				}
+				return "effect can be used after warning";
 			}
 		}
 	}
