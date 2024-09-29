@@ -132,6 +132,15 @@ var FloatExporter = (function() {
 					}
 					this.audioData = changedArray;
 					return true;
+				},
+				stableVolume: () => {
+					const len = this.audioData.length
+					let c
+					for (let i = 0; i !== len; i++) {
+						c = changedArray[i]
+						changedArray[i] = c !== 0 ? c / (Math.trunc(c * 8) / 8) : 1
+					}
+					return true;
 				}
 			}
 		}
