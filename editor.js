@@ -13,29 +13,29 @@ class FloatExporter {
 				if (multiplier === 1) {
 					return
 				} else if (multiplier === 0) {
-					this.audioData = new Float32Array(this.audioData.length)
+					this.audioData.fill(0)
 					return
 				}
-				const array = [...this.audioData]
-				for (let i = 0; i < array.length; i++) {
-					array[i] *= multiplier
+				const de = this.audioData.length
+				for (let i = 0; i !== de; i++) {
+					this.audioData[i] *= multiplier
 				}
-				this.audioData = new Float32Array(array)
 			},
 			speed: multiplier => {
 				if (multiplier !== 1) {
-					const array = [...this.audioData];
-					let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)));
-					if (multiplier >= array.length) {
+					let len = this.audioData.length
+					if (multiplier >= len) {
 						console.warn("The audio will be practically unhearable if its multiplier is bigger than the audio's buffer size. Returning an empty buffer now.");
 						this.audioData = new Float32Array([]);
 						return;
 					} else if (multiplier <= 0) {
-						console.warn("The audio module would freeze if the multiplier is ≤ 0. Did you mean to use", multiplier * -1, "for the multiplier instead?");
-						return;
+						multiplier *= -1
+						console.warn("The module would crash and the audio will be reversed if the multiplier would be ≤ 0. Did you mean to use", multiplier, "for the multiplier instead?");
 					}
-					for (let i = 0; i < changedArray.length; i++) {
-						changedArray[i] = array[Math.floor(i * multiplier)] || 0;
+					let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)));
+					len = changedArray.length
+					for (let i = 0; i !== len; i++) {
+						changedArray[i] = array[Math.floor(i * multiplier)];
 					}
 					this.audioData = changedArray;
 				}
@@ -59,9 +59,9 @@ class FloatExporter {
 		view.setUint16(34, 16, true);
 		this.writeString(view, 36, 'data');
 		view.setUint32(40, this.audioData.length * 2, true);
-		let offset = 44;
+		let offset = 44, s;
 		for (let i = 0; i < this.audioData.length; i++) {
-			const s = Math.max(-1, Math.min(1, this.audioData[i]));
+			s = Math.max(-1, Math.min(1, this.audioData[i]));
 			view.setInt16(offset, s < 0 ? s * 32768 : s * 32767, true);
 			offset += 2;
 		}
