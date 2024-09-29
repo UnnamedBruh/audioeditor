@@ -38,6 +38,18 @@ class FloatExporter {
 					}
 					this.audioData = changedArray;
 				}
+			},
+			distort: () => {
+				const de = this.audioData.length;
+				for (let i = 0; i !== de; i++) {
+					this.audioData[i] = Math.tanh(this.audioData[i]);
+				}
+			},
+			quantize: bits => {
+				const step = Math.pow(2, -bits), de = this.audioData.length;
+				for (let i = 0; i !== de; i++) {
+					this.audioData[i] = Math.round(this.audioData[i] / step) * step;
+				}
 			}
 		}
 	}
