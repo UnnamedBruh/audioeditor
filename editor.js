@@ -35,7 +35,7 @@ class FloatExporter {
 					let changedArray = new Float32Array(Math.ceil(array.length * (1 / multiplier)));
 					len = changedArray.length
 					for (let i = 0; i !== len; i++) {
-						changedArray[i] = array[Math.floor(i * multiplier)];
+						changedArray[i] = this.audioData[Math.floor(i * multiplier)];
 					}
 					this.audioData = changedArray;
 				}
