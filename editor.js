@@ -10,9 +10,8 @@ class FloatExporter {
 		this.backupData = new Float32Array(this.audioData);
 		this.FX = {
 			gain: multiplier => {
-				if (multiplier === 1) {
-					return
-				} else if (multiplier === 0) {
+				if (multiplier === 1) return;
+				if (multiplier === 0) {
 					this.audioData.fill(0)
 					return
 				}
@@ -32,7 +31,7 @@ class FloatExporter {
 						multiplier *= -1
 						console.warn("The module would crash and the audio will be reversed if the multiplier would be ≤ 0. Did you mean to use", multiplier, "for the multiplier instead?");
 					}
-					let changedArray = new Float32Array(Math.ceil(this.audioData.length * (1 / multiplier)));
+					const changedArray = new Float32Array(Math.ceil(this.audioData.length * (1 / multiplier)));
 					len = changedArray.length
 					for (let i = 0; i !== len; i++) {
 						changedArray[i] = this.audioData[Math.floor(i * multiplier)];
