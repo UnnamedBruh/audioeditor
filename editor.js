@@ -162,6 +162,12 @@ var FloatExporter = (function() {
 					return true;
 				},
 				distort4: level => {
+					if (len === 0) {
+						return false;
+					}
+					if (len % 1 !== 0) {
+						console.warn("The level must be a whole number currently. A specific feature could support decimals in a future update.")
+					}
 					const len = this.audioData.length
 					let c
 					for (let i = 0; i !== len; i++) {
@@ -300,6 +306,7 @@ var FloatExporter = (function() {
 				console.log("This function is supposed to help you understand how the module works, and how the effects are applied to the module. Here are all of the possible values that can be achieved:\n- 'fx gain'\n- 'fx speed'\n- 'fx distort'\n- 'fx quantize'\n- 'fx reduceFrequency'\n- 'fx doubleSpeed'")
 			}
 		}
+		version = 0;
 	}
 	return FloatExporter
 })()
