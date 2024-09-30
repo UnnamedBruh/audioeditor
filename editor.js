@@ -161,6 +161,16 @@ var FloatExporter = (function() {
 					}
 					return true;
 				},
+				distort4: level => {
+					const len = this.audioData.length
+					let c
+					for (let i = 0; i !== len; i++) {
+						for (let j = 0; j !== level; j++) {
+							this.audioData[i] = Math.sqrt(this.audioData[i])
+						}
+					}
+					return true;
+				},
 				reverse: () => {
 					this.audioData = this.audioData.reverse()
 				},
@@ -210,19 +220,10 @@ var FloatExporter = (function() {
 					if (de.sampleRate !== di.sampleRate && sampleRateEvened) {
 						di.FX.speed(1 / Math.abs(this.sampleRate / exporter.sampleRate))
 					}
-					const arr = de <= di
 					let r
-					if (arr) {
-						for (let i = 0; i < di; i++) {
-							r = Math.sqrt(Math.abs(exporter.audioData[i]))
-							this.audioData[i] -= (r < 0.04 && r > -0.04) ? 0 : r
-						}
-					} else {
-						for (let i = 0; i < de; i++) {
-							r = Math.sqrt(Math.abs(this.audioData[i]))
-							exporter.audioData[i] -= (r < 0.04 && r > -0.04) ? 0 : r
-						}
-						this.audioData = new Float32Array(exporter.audioData)
+					for (let i = 0; i < di; i++) {
+						r = Math.sqrt(Math.abs(exporter.audioData[i]))
+						this.audioData[i] += (r < 0.2 && r > -0.2) ? Math.sqrt(this.audioData[i] * r) : 0
 					}
 					return true
 				}
