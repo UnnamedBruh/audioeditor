@@ -181,6 +181,29 @@ var FloatExporter = (function() {
 						this.audioData = new Float32Array(exporter.audioData)
 					}
 					return true
+				},
+				echo: (layers = 3, delay = 1000) => {
+					if (layers < 0) {
+						throw new Error("There must be a number of layers ≥ 0. Otherwise, the environment would freeze and a memory leak is caused")
+					} else if (layers === 0) {
+						return false
+					} else if (layers % 1 !== 0) {
+						console.warn("The layers must be rounded for valid echoes in the audio")
+						layers = Math.ceil(layers)
+					}
+					delay = Math.ceil(delay)
+					const de = this.audioData.length, di = this.audioData.length + layers * delay, la = layers + 1;
+					const arr = new Float32Array(this.audioData);
+					let on, no
+					for (let j = 1; j !== la; j++) {
+						on = j * delay
+						no = j + 1
+						for (let i = 0; i !== de; i++) {
+							arr[i + on] += this.audioData[i] / no
+						}
+					}
+					this.audioData = arr
+					return true
 				}
 			}
 		}
