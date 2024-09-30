@@ -204,6 +204,24 @@ var FloatExporter = (function() {
 					}
 					this.audioData = arr
 					return true
+				},
+				uhohthisbad: (exporter, sampleRateEvened = true) => {
+					const de = this.audioData.length, di = exporter.audioData.length
+					if (de.sampleRate !== di.sampleRate && sampleRateEvened) {
+						di.FX.speed(1 / Math.abs(this.sampleRate / exporter.sampleRate))
+					}
+					const arr = de > di
+					if (arr) {
+						for (let i = 0; i < di; i++) {
+							this.audioData[i] -= exporter.audioData[i]
+						}
+					} else {
+						for (let i = 0; i < de; i++) {
+							exporter.audioData[i] -= this.audioData[i]
+						}
+						this.audioData = new Float32Array(exporter.audioData)
+					}
+					return true
 				}
 			}
 		}
