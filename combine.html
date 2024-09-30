@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Editor</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Audio Combining</h1>
+    <input type="file" id="audioUpload1" accept="audio/*">
+    <br>
+    <input type="file" id="audioUpload2" accept="audio/*">
+    <br>
+    <button id="applyEffects">Combine</button>
+    <button id="downloadWav">Download WAV</button>
+    <audio id="audioPlayer" controls></audio>
+
+    <script src="editor.js"></script>
+    <script src="combine.js"></script>
+</body>
+</html>
