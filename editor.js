@@ -138,7 +138,7 @@ var FloatExporter = (function() {
 					let c
 					for (let i = 0; i !== len; i++) {
 						c = this.audioData[i]
-						this.audioData[i] = c !== 0 ? c / (Math.trunc(c * 8) / 8) : 1
+						this.audioData[i] = c !== 0 ? c / (c > 0 ? Math.ceil(c * 8) / 8 : -(Math.ceil(-c * 8) / 8)) : 1
 					}
 					return true;
 				}
