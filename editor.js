@@ -222,8 +222,8 @@ var FloatExporter = (function() {
 					}
 					let r
 					for (let i = 0; i < di; i++) {
-						r = Math.sqrt(Math.abs(exporter.audioData[i]))
-						this.audioData[i] += (r < 0.2 && r > -0.2) ? Math.sqrt(this.audioData[i] * r) : 0
+						r = Math.abs(exporter.audioData[i])
+						this.audioData[i] += (r < 0.2 && r > -0.2) ? Math.sqrt(this.audioData[i] * r) * Math.PI : 0
 					}
 					return true
 				}
