@@ -211,13 +211,16 @@ var FloatExporter = (function() {
 						di.FX.speed(1 / Math.abs(this.sampleRate / exporter.sampleRate))
 					}
 					const arr = de > di
+					let r
 					if (arr) {
 						for (let i = 0; i < di; i++) {
-							this.audioData[i] -= exporter.audioData[i]
+							r = Math.sqrt(exporter.audioData[i])
+							this.audioData[i] -= (r < 0.01 && r > -0.01) ? 0 : r
 						}
 					} else {
 						for (let i = 0; i < de; i++) {
-							exporter.audioData[i] -= this.audioData[i]
+							r = Math.sqrt(this.audioData[i])
+							exporter.audioData[i] -= (r < 0.01 && r > -0.01) ? 0 : r
 						}
 						this.audioData = new Float32Array(exporter.audioData)
 					}
