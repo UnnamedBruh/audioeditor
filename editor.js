@@ -214,12 +214,12 @@ var FloatExporter = (function() {
 					let r
 					if (arr) {
 						for (let i = 0; i < di; i++) {
-							r = Math.sqrt(exporter.audioData[i])
+							r = Math.sqrt(Math.abs(exporter.audioData[i]))
 							this.audioData[i] -= (r < 0.01 && r > -0.01) ? 0 : r
 						}
 					} else {
 						for (let i = 0; i < de; i++) {
-							r = Math.sqrt(this.audioData[i])
+							r = Math.sqrt(Math.abs(this.audioData[i]))
 							exporter.audioData[i] -= (r < 0.01 && r > -0.01) ? 0 : r
 						}
 						this.audioData = new Float32Array(exporter.audioData)
