@@ -33,7 +33,7 @@ var FloatExporter = (function() {
 					if (multiplier === 1) return false;
 					if (multiplier === 0) {
 						this.audioData.fill(0)
-						return false;
+						return true;
 					}
 					const de = this.audioData.length
 					for (let i = 0; i !== de; i++) {
@@ -52,7 +52,7 @@ var FloatExporter = (function() {
 							this.audioData = new Float32Array([]);
 							return false;
 						} else if (multiplier === 0) {
-							throw new Error("Prevented an infinite loop and a memory overflow, due to how the audio is processed.");
+							throw new Error("The multiplier cannot be 0, because if it is, the environment would freeze and the environment would have a memory overflow. This was prevented so the environment wouldn't crash.");
 						} else if (multiplier < 0) {
 							multiplier *= -1
 							console.warn("The module would crash and the audio will be reversed if the multiplier would be ≤ 0. Did you mean to use", multiplier, "for the multiplier instead?");
@@ -133,12 +133,31 @@ var FloatExporter = (function() {
 					this.audioData = changedArray;
 					return true;
 				},
-				distort2: precision => {
-					const len = this.audioData.length, z = 0, o = 1
+				distort2: level => {
+					if (level === 0) {
+						throw new Error("The level cannot be 0, because of the infinite values that can be achieved.")
+					}
+					const len = this.audioData.length;
+					if (len === 0) {
+						return false;
+					} else if (len === 1) {
+						const c = this.audioData[0]
+						this.audioData[0] = c !== 0 ? c / (c > 0 ? Math.ceil(c * level) / level : -(Math.ceil(-c * level) / level)) : 1
+						return true;
+					}
+					const z = 0, o = 1
 					let c
 					for (let i = 0; i !== len; i++) {
 						c = this.audioData[i]
-						this.audioData[i] = c !== z ? c / (c > z ? Math.ceil(c * precision) / precision : -(Math.ceil(-c * precision) / precision)) : o
+						this.audioData[i] = c !== z ? c / (c > z ? Math.ceil(c * level) / level : -(Math.ceil(-c * level) / level)) : o
+					}
+					return true;
+				},
+				distort3: () => {
+					const len = this.audioData.length
+					let c
+					for (let i = 0; i !== len; i++) {
+						this.audioData[i] *= this.audioData[i]
 					}
 					return true;
 				}
