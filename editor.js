@@ -133,12 +133,12 @@ var FloatExporter = (function() {
 					this.audioData = changedArray;
 					return true;
 				},
-				highDistort: () => {
-					const len = this.audioData.length
+				distort2: precision => {
+					const len = this.audioData.length, z = 0, o = 1
 					let c
 					for (let i = 0; i !== len; i++) {
 						c = this.audioData[i]
-						this.audioData[i] = c !== 0 ? c / (c > 0 ? Math.ceil(c * 8) / 8 : -(Math.ceil(-c * 8) / 8)) : 1
+						this.audioData[i] = c !== z ? c / (c > z ? Math.ceil(c * precision) / precision : -(Math.ceil(-c * precision) / precision)) : o
 					}
 					return true;
 				}
