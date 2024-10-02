@@ -232,7 +232,7 @@ var FloatExporter = (function() {
 					if (de === 0) return false
 					const s = 2 * Math.PI
 					for (let i = 0; i !== de; i++) {
-						this.audioData[i] = Math.sin(s * (Math.abs(this.audioData[i]) * 2048) * this.sampleRate)
+						this.audioData[i] = Math.sin((s * (Math.abs(this.audioData[i]) * 2048) / this.sampleRate) * i)
 					}
 					return true
 				}
