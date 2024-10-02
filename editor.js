@@ -162,11 +162,16 @@ var FloatExporter = (function() {
 					return true;
 				},
 				distort4: level => {
-					if (len === 0) {
+					if (level === 0) {
 						return false;
 					}
-					if (len % 1 !== 0) {
+					if (level % 1 !== 0) {
 						console.warn("The level must be a whole number currently. A specific feature could support decimals in a future update.")
+						level = Math.round(level)
+					}
+					if (level < 0) {
+						console.warn("The level must be positive.")
+						level *= -1
 					}
 					const len = this.audioData.length
 					let c
@@ -219,18 +224,6 @@ var FloatExporter = (function() {
 						}
 					}
 					this.audioData = arr
-					return true
-				},
-				uhohthisbad: (exporter, sampleRateEvened = true) => {
-					const de = this.audioData.length, di = exporter.audioData.length
-					if (de.sampleRate !== di.sampleRate && sampleRateEvened) {
-						di.FX.speed(1 / Math.abs(this.sampleRate / exporter.sampleRate))
-					}
-					let r
-					for (let i = 0; i < di; i++) {
-						r = Math.abs(exporter.audioData[i])
-						this.audioData[i] += (r < 0.2 && r > -0.2) ? Math.sqrt(this.audioData[i] * r) * Math.PI : 0
-					}
 					return true
 				}
 			}
