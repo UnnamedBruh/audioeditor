@@ -233,6 +233,14 @@ var FloatExporter = (function() {
 						this.audioData[i] = Math.sin(this.audioData[i])
 					}
 					return true
+				},
+				cos: () => {
+					const de = this.audioData.length
+					if (de === 0) return false
+					for (let i = 0; i !== de; i++) {
+						this.audioData[i] = Math.cos(this.audioData[i])
+					}
+					return true
 				}
 			}
 		}
