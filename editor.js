@@ -1,7 +1,7 @@
 var FloatExporter = (function() {
 	function isNumber(msg, v) {
 		if (typeof v !== "number") {
-			throw new Error(msg + " must be a number, not a '" + (typeof sampleRate) + "'")
+			throw new Error(msg + " must be a number, not a '" + (typeof v) + "'")
 		}
 	}
 	class FloatExporter {
@@ -225,6 +225,16 @@ var FloatExporter = (function() {
 					}
 					this.audioData = arr
 					return true
+				},
+				sine: () => {
+					console.warn("This is a computationally slower effect compared to other effects! Make sure you use with caution")
+					const de = this.audioData.length
+					if (de === 0) return false
+					const s = 2 * Math.PI
+					for (let i = 0; i !== de; i++) {
+						this.audioData[i] = Math.sin(s * (Math.abs(this.audioData[i]) * 2048) * this.sampleRate)
+					}
+					return true
 				}
 			}
 		}
@@ -261,7 +271,7 @@ var FloatExporter = (function() {
 		}
 		restore() {
 			this.audioData = this.backupData;
-			this.backupData = this.backupData.slice();
+			this.backupData = Float32Array.from(this.backupData);
 		}
 		static sineWave(frequency, duration, sampleRate) {
 			const array = new Float32Array(Math.floor(duration * sampleRate))
