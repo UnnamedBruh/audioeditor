@@ -240,7 +240,7 @@ var FloatExporter = (function() {
 					for (let i = 0; i !== de; i++) {
 						this.audioData[i] = Math.cos(this.audioData[i])
 					}
-					return true
+					return true;
 				}
 			}
 		}
