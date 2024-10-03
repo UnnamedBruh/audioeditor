@@ -233,6 +233,9 @@ var FloatExporter = (function() {
 						this.audioData[i] = Math.cos(this.audioData[i])
 					}
 					return true
+				},
+				random: () => {
+					this.audioData = new Float32Array([...this.audioData].sort(() => Math.random() - 0.5))
 				}
 			}
 		}
