@@ -36,7 +36,7 @@ var FloatExporter = (function() {
 						return true;
 					}
 					const de = this.audioData.length
-					for (let i = 0; i !== de; i++,i=i>>>0;) {
+					for (let i = 0; i !== de; i++,i=i>>>0) {
 						this.audioData[i] *= multiplier
 					}
 					return true
