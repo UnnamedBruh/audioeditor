@@ -109,7 +109,7 @@ var FloatExporter = (function() {
 						if (de === 1 || de === 0) return false;
 						const s = Math.ceil(sample) - 1
 						let c, e;
-						for (let j = 0; j < de; j += sample;) {
+						for (let j = 0; j < de; j += sample) {
 							c = this.audioData[(e = Math.floor(j))];
 							for (let i = 0; i !== s && i + j < de; i++) {
 								this.audioData[i + e] = c;
