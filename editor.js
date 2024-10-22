@@ -36,7 +36,7 @@ var FloatExporter = (function() {
 						return true;
 					}
 					const de = this.audioData.length
-					for (let i = 0; i !== de; i++) {
+					for (let i = 0; i !== de; i++,i=i>>>0;) {
 						this.audioData[i] *= multiplier
 					}
 					return true
@@ -59,7 +59,7 @@ var FloatExporter = (function() {
 						}
 						const changedArray = new Float32Array(Math.ceil(this.audioData.length * (1 / multiplier)));
 						len = changedArray.length
-						for (let i = 0; i !== len; i++) {
+						for (let i = 0; i !== len; i++,i=i>>>0) {
 							changedArray[i] = this.audioData[Math.floor(i * multiplier)];
 						}
 						this.audioData = changedArray;
@@ -73,7 +73,7 @@ var FloatExporter = (function() {
 						this.audioData[0] = Math.tanh(this.audioData[0])
 						return true;
 					}
-					for (let i = 0; i !== de; i++) {
+					for (let i = 0; i !== de; i++,i=i>>>0) {
 						this.audioData[i] = Math.tanh(this.audioData[i]);
 					}
 					return true;
@@ -87,7 +87,7 @@ var FloatExporter = (function() {
 						this.audioData[0] = Math.round(this.audioData[0] / step) * step;
 						return true;
 					}
-					for (let i = 0; i !== de; i++) {
+					for (let i = 0; i !== de; i++,i=i>>>0) {
 						this.audioData[i] = Math.round(this.audioData[i] / step) * step;
 					}
 					return true;
@@ -109,7 +109,7 @@ var FloatExporter = (function() {
 						if (de === 1 || de === 0) return false;
 						const s = Math.ceil(sample) - 1
 						let c, e;
-						for (let j = 0; j < de; j += sample) {
+						for (let j = 0; j < de; j += sample;) {
 							c = this.audioData[(e = Math.floor(j))];
 							for (let i = 0; i !== s && i + j < de; i++) {
 								this.audioData[i + e] = c;
@@ -126,9 +126,9 @@ var FloatExporter = (function() {
 					const changedArray = new Float32Array(leng);
 					len = changedArray.length
 					let j = 0
-					for (let i = 0; i !== len; i++) {
+					for (let i = 0; i !== len; i++,i=i>>>0) {
 						changedArray[i] = (this.audioData[j] + this.audioData[j + 1]) / 2;
-						j += 2
+						j += 2, j = j >>> 0;
 					}
 					this.audioData = changedArray;
 					return true;
@@ -147,7 +147,7 @@ var FloatExporter = (function() {
 					}
 					const z = 0, o = 1
 					let c
-					for (let i = 0; i !== len; i++) {
+					for (let i = 0; i !== len; i++,i=i>>>0) {
 						c = this.audioData[i]
 						this.audioData[i] = c !== z ? c / (c > z ? Math.ceil(c * level) / level : -(Math.ceil(-c * level) / level)) : o
 					}
@@ -156,7 +156,7 @@ var FloatExporter = (function() {
 				distort3: () => {
 					const len = this.audioData.length
 					let c
-					for (let i = 0; i !== len; i++) {
+					for (let i = 0; i !== len; i++,i=i>>>0) {
 						this.audioData[i] *= this.audioData[i]
 					}
 					return true;
@@ -175,8 +175,8 @@ var FloatExporter = (function() {
 					}
 					const len = this.audioData.length
 					let c
-					for (let i = 0; i !== len; i++) {
-						for (let j = 0; j !== level; j++) {
+					for (let i = 0; i !== len; i++,i=i>>>0) {
+						for (let j = 0; j !== level; j++,j=j>>>0) {
 							this.audioData[i] = Math.sqrt(this.audioData[i])
 						}
 					}
@@ -192,11 +192,11 @@ var FloatExporter = (function() {
 					}
 					const arr = de > di
 					if (arr) {
-						for (let i = 0; i < di; i++) {
+						for (let i = 0; i !== di; i++,i=i>>>0) {
 							this.audioData[i] += exporter.audioData[i]
 						}
 					} else {
-						for (let i = 0; i < de; i++) {
+						for (let i = 0; i !== de; i++,i=i>>>0) {
 							exporter.audioData[i] += this.audioData[i]
 						}
 						this.audioData = new Float32Array(exporter.audioData)
@@ -216,10 +216,10 @@ var FloatExporter = (function() {
 					const de = this.audioData.length, di = this.audioData.length + layers * delay, la = layers + 1;
 					const arr = new Float32Array(this.audioData);
 					let on, no
-					for (let j = 1; j !== la; j++) {
+					for (let j = 1; j !== la; j++,j=j>>>0) {
 						on = j * delay
 						no = j + 1
-						for (let i = 0; i !== de; i++) {
+						for (let i = 0; i !== de; i++,i=i>>>0) {
 							arr[i + on] += this.audioData[i] / no
 						}
 					}
@@ -229,7 +229,7 @@ var FloatExporter = (function() {
 				filterBass: () => {
 					const de = this.audioData.length
 					if (de === 0) return false
-					for (let i = 0; i !== de; i++) {
+					for (let i = 0; i !== de; i++,i=i>>>0) {
 						this.audioData[i] = Math.cos(this.audioData[i])
 					}
 					return true
@@ -255,7 +255,7 @@ var FloatExporter = (function() {
 			this.writeString(view, 36, 'data');
 			view.setUint32(40, len2, true);
 			let offset = 44, s;
-			for (let i = 0; i !== len; i++) {
+			for (let i = 0; i !== len; i++,i=i>>>0) {
 				s = Math.max(ch4, Math.min(ch5, this.audioData[i]));
 				view.setInt16(offset, s < ch3 ? s * ch2 : s * ch1, true);
 				offset += 2;
