@@ -228,7 +228,7 @@ var FloatExporter = (function() {
 				},
 				filterMidpass: () => {
 					const de = this.audioData.length
-					if (de === 0) return false
+					if (de === 0) return false;
 					for (let i = 0; i !== de; i++) {
 						this.audioData[i] = Math.cos(this.audioData[i])
 					}
@@ -236,7 +236,7 @@ var FloatExporter = (function() {
 				},
 				excludeMidpass: () => {
 					const de = this.audioData.length
-					if (de === 0) return false
+					if (de === 0) return false;
 					for (let i = 0; i !== de; i++) {
 						this.audioData[i] = (this.audioData[i] - Math.cos(this.audioData[i])) / 2
 					}
@@ -244,11 +244,26 @@ var FloatExporter = (function() {
 				},
 				excludeLowpass: () => {
 					const de = this.audioData.length
-					if (de === 0) return false
+					if (de === 0) return false;
 					for (let i = 0; i !== de; i++) {
 						this.audioData[i] -= Math.sqrt(Math.abs(this.audioData[i]))
 					}
 					return true
+				},
+				repeat: (times) => {
+					const de = this.audioData.length;
+					if (times === 0) {
+						this.audioData = new Float32Array([]);
+						return true;
+					}
+					if (times === 1 || de === 0) return false;
+					const newData = new Float32Array(this.audioData.length * times);
+					const len == newData.length;
+					for (let i = 0; i !== len; i++) {
+						newData[i] = this.audioData[i % this.audioData.length];
+					}
+					this.audioData = newData;
+					return true;
 				}
 			}
 		}
