@@ -258,7 +258,7 @@ var FloatExporter = (function() {
 					}
 					if (times === 1 || de === 0) return false;
 					const newData = new Float32Array(this.audioData.length * times);
-					const len == newData.length;
+					const len = newData.length;
 					for (let i = 0; i !== len; i++) {
 						newData[i] = this.audioData[i % this.audioData.length];
 					}
