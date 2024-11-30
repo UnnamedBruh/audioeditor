@@ -180,7 +180,7 @@ document.getElementById('audioUpload').addEventListener('change', function(event
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             audioContext.decodeAudioData(e.target.result, (buffer) => {
                 const buffer1 = buffer.getChannelData(0);
-                const buffer2 = buffer.getChannelData(1);
+                const buffer2 = (function(){try{return buffer.getChannelData(1)}catch{return null}})();
                 const audioData = new Int16Array(buffer1.length + (buffer2 ? buffer2.length : 0));
                 const length = Math.floor(buffer2 ? (audioData.length / 2) : audioData.length);
                 const multiplier = 32767;
