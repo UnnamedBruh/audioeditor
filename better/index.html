@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Editor</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        .effect {
+            border-radius: 10px;
+            background-color: #888888;
+            width: 200px;
+        }
+        body, audio {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Audio Editor</h1>
+    <input type="file" id="audioUpload" accept="audio/*">
+    <br><br>
+    <button id="addEffect">Add Effect</button>
+    <br><br>
+    <div id="effects"></div>
+    <button id="applyEffects">Apply Effects</button>
+    <button id="downloadWav">Download WAV</button>
+    <audio id="audioPlayer" controls></audio>
+    <script>
+let effectsAdded = [];
+class AudioExporter {
+	constructor(audioData, sampleRate, channels) {
+		this.audioData = audioData;
+		this.sampleRate = sampleRate;
+        this.channels = channels;
+	}
+	convertToWav(exp = "blob") {
+		const numChannels = this.channels, ch4 = -1, ch5 = 1, len = this.audioData.length;
+		const len2 = len * 2;
+		const buffer = new ArrayBuffer(44 + len2);
+		const view = new DataView(buffer);
+		this.writeString(view, 0, 'RIFF');
+		view.setUint32(4, 36 + len2, true);
+		this.writeString(view, 8, 'WAVE');
+		this.writeString(view, 12, 'fmt ');
+		view.setUint32(16, 16, true);
+		view.setUint16(20, 1, true);
+		view.setUint16(22, numChannels, true);
+		view.setUint32(24, this.sampleRate, true);
+		view.setUint32(28, this.sampleRate * 2, true);
+		view.setUint16(32, 2, true);
+		view.setUint16(34, 16, true);
+		this.writeString(view, 36, 'data');
+		view.setUint32(40, len2, true);
+		let offset = 44;
+		for (let i = 0; i < len; i++) {
+			view.setInt16(offset, this.audioData[i], true);
+			offset += 2;
+		}
+		return exp === "blob" ? new Blob([view], { type: 'audio/wav' }) : exp === "dataview" ? view : undefined;
+	}
+	writeString(view, offset, string) {
+		for (let i = 0; i < string.length; i++) {
+			view.setUint8(offset + i, string.charCodeAt(i));
+		}
+	}
+	static sineWave(frequency, duration, sampleRate) {
+		const array = new Int16Array(Math.floor(duration * sampleRate));
+		const len = array.length, cache = 2 * Math.PI;
+		for (let i = 0; i < len; i++) {
+			array[i] = Math.round(Math.sin((cache * frequency * i) / sampleRate)) * 32767;
+		}
+		return new AudioExporter(array, sampleRate);
+	}
+	version = 0;
+};
+let exporter;
+document.getElementById('audioUpload').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioContext.decodeAudioData(e.target.result, (buffer) => {
+                const buffer1 = buffer.getChannelData(0);
+                const buffer2 = buffer.getChannelData(1);
+                const audioData = new Int16Array(buffer1.length + (buffer2 ? buffer2.length : 0));
+                const length = Math.floor(buffer2 ? (audioData.length / 2) : audioData.length);
+                const multiplier = 32767;
+                if (buffer2) {
+                    let j = 0, i = 0;
+                    try {
+                        for (; i < length; i++, j++) {
+                            audioData[j++] = buffer1[i] * multiplier;
+                            audioData[j++] = buffer2[i] * multiplier;
+                        }
+                    } catch {
+                        // I'm not going to worry about it, the processing must have been done anyway.
+                        console.log("The processing has been done, which was when the importing crashed. I'm trying to make it the least intensive as I can, okay?");
+                    }
+                } else {
+                    for (let i = 0; i < length; i++) {
+                        audioData[i] = buffer1[i] * multiplier;
+                    }
+                }
+                exporter = new AudioExporter(audioData, buffer1.sampleRate, buffer2 ? 2 : 1);
+                console.log("Audio loaded.");
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    }
+});
+let changed = false;
+document.getElementById('applyEffects').addEventListener('click', function() {
+    if (exporter && changed) {
+        changed = false;
+        channels = exporter.channels;
+        length = exporter.audioData.length;
+        const audioData = exporter.audioData;
+        // Since audioData and exporter.audioData have the same memory point, modifying the items from audioData must do the same with exporter.audioData
+        for (const effect of effects) {
+            switch (effect.type) {
+                case "bitcrush":
+                    let {rate, bits} = effect;
+                    rate = rate * 2;
+                    const precision = 32767 / Math.pow(2, bits);
+                    if (rate === 1) {
+                        for (let i = 0; i < length; i++) {
+                            audioData[i] = Math.round(audioData[i] / precision) * precision;
+                        }
+                    } else {
+                        if (Math.floor(rate) === rate) {
+                            for (let i = 0; i < length; i++) {
+                                audioData[Math.floor(i / rate) * rate] = Math.round(audioData[i] / precision) * precision;
+                            }
+                        } else {
+                            for (let i = 0; i < length; i++) {
+                                audioData[Math.floor(Math.round(i / rate) * rate)] = Math.round(audioData[i] / precision) * precision;
+                            }
+                        }
+                    }
+            }
+        }
+        // Update the audio player
+        const wavBlob = exporter.convertToWav('blob');
+        const audioUrl = URL.createObjectURL(wavBlob);
+        const audioPlayer = document.getElementById('audioPlayer');
+        if (audioPlayer.src) {
+            URL.revokeObjectURL(audioPlayer.src);
+        }
+        audioPlayer.src = audioUrl;
+        audioPlayer.play();
+    } else {
+        alert("Please upload an audio file first.");
+    }
+});
+document.getElementById('downloadWav').addEventListener('click', function() {
+    if (exporter) {
+        const wavBlob = exporter.convertToWav('blob');
+        const url = URL.createObjectURL(wavBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'modified-audio.wav';
+        a.click();
+        URL.revokeObjectURL(url);
+    } else {
+        alert("Please upload an audio file first.");
+    }
+});
+    </script>
+</body>
+</html>
