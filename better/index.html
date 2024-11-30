@@ -184,7 +184,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     const data = cacheBitcrushWaveForm, m = 50;
                     const mult = currentJSON.multiplier;
                     if (mult === 1) {
-                        for (let i = 0; i < 400; i++) {
+                        for (let i = 0; i < 400; i += 2) {
                             x = data[i + 1];
                             y = data[i];
                             data2 = data2 + "L " + x + "," + y + " ";
@@ -192,7 +192,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     } else if (mult === 0) {
                         data2 = 'M 0,50 L 200,50';
                     } else {
-                        for (let i = 0; i < 400; i++) {
+                        for (let i = 0; i < 400; i += 2) {
                             x = data[i + 1];
                             y = (data[i] - m) * mult + m;
                             data2 = data2 + "L " + x + "," + y + " ";
