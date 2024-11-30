@@ -295,7 +295,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                     break;
                 case "gain":
                     const multiplier = effect.multiplier;
-                    if (multiplication == 0) {
+                    if (multiplier == 0) {
                         audioData.fill(0);
                     } else {
                         for (let i = 0; i < length; i++) {
