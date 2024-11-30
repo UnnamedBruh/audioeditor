@@ -159,6 +159,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     currentJSON.bits = bits.value ? Math.abs(Number(bits.value)) : 4;
                     if (bits.value  && currentJSON.bits < 16) updateBitcrushWave();
                 }
+		updateBitcrushWave();
         }
         const remove = document.createElement("button");
         center.appendChild(remove);
