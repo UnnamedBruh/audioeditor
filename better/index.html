@@ -221,7 +221,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
         channels = exporter.channels;
         length = exporter.audioData.length;
         // Since audioData and exporter.audioData have the same memory point, modifying the items from audioData must do the same with exporter.audioData
-        for (const effect of effects) {
+        for (const effect of addedEffects) {
             switch (effect.type) {
                 case "bitcrush":
                     let {rate, bits} = effect;
