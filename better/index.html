@@ -83,6 +83,94 @@ class AudioExporter {
 	version = 0;
 };
 let exporter;
+const effects = ["bitcrush"], list = document.getElementById("effects");
+const applyEffect = "Type in a number to select an effect (e.g. ";
+// The first item is the Y position, the second item is the X position, and it repeats
+const cacheBitcrushWaveForm = new Uint8Array([50,0,52,1,53,2,55,3,56,4,58,5,59,6,61,7,62,8,64,9,65,10,67,11,68,12,70,13,71,14,73,15,74,16,75,17,77,18,78,19,79,20,81,21,82,22,83,23,84,24,85,25,86,26,88,27,89,28,90,29,90,30,91,31,92,32,93,33,94,34,95,35,95,36,96,37,96,38,97,39,98,40,98,41,98,42,99,43,99,44,99,45,100,46,100,47,100,48,100,49,100,50,100,51,100,52,100,53,100,54,99,55,99,56,99,57,98,58,98,59,98,60,97,61,96,62,96,63,95,64,95,65,94,66,93,67,92,68,91,69,90,70,90,71,89,72,88,73,86,74,85,75,84,76,83,77,82,78,81,79,79,80,78,81,77,82,75,83,74,84,73,85,71,86,70,87,68,88,67,89,65,90,64,91,62,92,61,93,59,94,58,95,56,96,55,97,53,98,52,99,50,100,48,101,47,102,45,103,44,104,42,105,41,106,39,107,38,108,36,109,35,110,33,111,32,112,30,113,29,114,27,115,26,116,25,117,23,118,22,119,21,120,19,121,18,122,17,123,16,124,15,125,14,126,12,127,11,128,10,129,10,130,9,131,8,132,7,133,6,134,5,135,5,136,4,137,4,138,3,139,2,140,2,141,2,142,1,143,1,144,1,145,0,146,0,147,0,148,0,149,0,150,0,151,0,152,0,153,0,154,1,155,1,156,1,157,2,158,2,159,2,160,3,161,4,162,4,163,5,164,5,165,6,166,7,167,8,168,9,169,10,170,10,171,11,172,12,173,14,174,15,175,16,176,17,177,18,178,19,179,21,180,22,181,23,182,25,183,26,184,27,185,29,186,30,187,32,188,33,189,35,190,36,191,38,192,39,193,41,194,42,195,44,196,45,197,47,198,48,199]);
+for (let i = 0; i < effects.length; i++) {
+    applyEffect = applyEffect + i + " = " + effects[i] + ", ";
+}
+applyEffect = applyEffect.replace(/, $/, "") + ")";
+document.getElementById('addEffect').addEventListener('click', function() {
+    const index = Math.floor(Number(prompt(applyEffect)));
+    if (index >= 0 && index < effects.length) {
+        const effect = document.createElement("div");
+        list.appendChild(effect);
+        effect.classList.add("effect");
+        const center = document.createElement("center");
+        effect.appendChild(center);
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        let currentJSON = {element: effect};
+        center.appendChild(svg);
+        svg.setAttribute("width", "200");
+        svg.setAttribute("height", "100");
+        const indexOfEffect = effectsAdded.length;
+        switch (effects[index]) {
+            case "bitcrush":
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("stroke", "red");
+                path.setAttribute("stroke-width", "2");
+                path.setAttribute("fill", "none");
+                path.setAttribute("d", "M 0,50 L 0,50 L 1,52 L 2,53 L 3,55 L 4,56 L 5,58 L 6,59 L 7,61 L 8,62 L 9,64 L 10,65 L 11,67 L 12,68 L 13,70 L 14,71 L 15,73 L 16,74 L 17,75 L 18,77 L 19,78 L 20,79 L 21,81 L 22,82 L 23,83 L 24,84 L 25,85 L 26,86 L 27,88 L 28,89 L 29,90 L 30,90 L 31,91 L 32,92 L 33,93 L 34,94 L 35,95 L 36,95 L 37,96 L 38,96 L 39,97 L 40,98 L 41,98 L 42,98 L 43,99 L 44,99 L 45,99 L 46,100 L 47,100 L 48,100 L 49,100 L 50,100 L 51,100 L 52,100 L 53,100 L 54,100 L 55,99 L 56,99 L 57,99 L 58,98 L 59,98 L 60,98 L 61,97 L 62,96 L 63,96 L 64,95 L 65,95 L 66,94 L 67,93 L 68,92 L 69,91 L 70,90 L 71,90 L 72,89 L 73,88 L 74,86 L 75,85 L 76,84 L 77,83 L 78,82 L 79,81 L 80,79 L 81,78 L 82,77 L 83,75 L 84,74 L 85,73 L 86,71 L 87,70 L 88,68 L 89,67 L 90,65 L 91,64 L 92,62 L 93,61 L 94,59 L 95,58 L 96,56 L 97,55 L 98,53 L 99,52 L 100,50 L 101,48 L 102,47 L 103,45 L 104,44 L 105,42 L 106,41 L 107,39 L 108,38 L 109,36 L 110,35 L 111,33 L 112,32 L 113,30 L 114,29 L 115,27 L 116,26 L 117,25 L 118,23 L 119,22 L 120,21 L 121,19 L 122,18 L 123,17 L 124,16 L 125,15 L 126,14 L 127,12 L 128,11 L 129,10 L 130,10 L 131,9 L 132,8 L 133,7 L 134,6 L 135,5 L 136,5 L 137,4 L 138,4 L 139,3 L 140,2 L 141,2 L 142,2 L 143,1 L 144,1 L 145,1 L 146,0 L 147,0 L 148,0 L 149,0 L 150,0 L 151,0 L 152,0 L 153,0 L 154,0 L 155,1 L 156,1 L 157,1 L 158,2 L 159,2 L 160,2 L 161,3 L 162,4 L 163,4 L 164,5 L 165,5 L 166,6 L 167,7 L 168,8 L 169,9 L 170,10 L 171,10 L 172,11 L 173,12 L 174,14 L 175,15 L 176,16 L 177,17 L 178,18 L 179,19 L 180,21 L 181,22 L 182,23 L 183,25 L 184,26 L 185,27 L 186,29 L 187,30 L 188,32 L 189,33 L 190,35 L 191,36 L 192,38 L 193,39 L 194,41 L 195,42 L 196,44 L 197,45 L 198,47 L 199,48");
+                svg.appendChild(path);
+                const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path2.setAttribute("stroke", "blue");
+                path2.setAttribute("stroke-width", "1");
+                path2.setAttribute("fill", "none");
+                path2.setAttribute("d", "");
+                svg.appendChild(path2);
+                const bits = document.createElement("input");
+                const labelBits = document.createElement("label");
+                const rate = document.createElement("input");
+                const labelRate = document.createElement("label");
+                const uniqueID = String(Math.random()).split(".")[1];
+                center.appendChild(bits);
+                center.appendChild(labelBits);
+                labelBits.textContent = "Bits:";
+                bits.id = uniqueID + "A";
+                labelBits.for = uniqueID + "A";
+                bits.value = "4";
+                currentJSON.bits = 4;
+                currentJSON.rate = 1;
+                center.appendChild(rate);
+                center.appendChild(labelRate);
+                center.appendChild(remove);
+                labelRate.textContent = "Rate:";
+                rate.id = uniqueID + "B";
+                labelRate.for = uniqueID + "B";
+                rate.value = "1";
+                function updateBitcrushWave() {
+                    const precision = 32767 / Math.pow(2, currentJSON.bits);
+                    let data2 = 'M 0,50 ';
+                    const data = cacheBitcrushWaveForm;
+                    let x, y;
+                    const mult = currentJSON.rate * 2;
+                    for (let i = 0; i < data.length; i += mult) {
+                        x = data[i + 1];
+                        y = Math.round(data[i] * precision) / precision;
+                        data2 = data2 + "L " + x + "," + y + " ";
+                    }
+                    path2.setAttribute("d", data2);
+                }
+                rate.oninput = function() {
+                    currentJSON.rate = rate.value ? Math.abs(Number(rate.value)) : 1;
+                    if (rate.value && currentJSON.bits < 16) updateBitcrushWave();
+                }
+                bits.oninput = function() {
+                    currentJSON.bits = bits.value ? Math.abs(Number(bits.value)) : 4;
+                    if (bits.value  && currentJSON.bits < 16) updateBitcrushWave();
+                }
+        }
+        const remove = document.createElement("button");
+        center.appendChild(remove);
+        remove.textContent = "Remove Effect";
+        remove.onclick = function() {
+            effectsAdded.splice(indexOfEffect, 1);
+            effect.remove();
+        }
+        effectsAdded.push(currentJSON);
+    }
+});
 document.getElementById('audioUpload').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
@@ -118,9 +206,11 @@ document.getElementById('audioUpload').addEventListener('change', function(event
         reader.readAsArrayBuffer(file);
     }
 });
-let changed = false;
+let changed = false, perm = true;
 document.getElementById('applyEffects').addEventListener('click', function() {
+    perm = perm && alert("Note that the effects that are applied will not be permanent - applying the effects after changing them would only change the effects, and not actually apply them again.");
     if (exporter && changed) {
+        exporter.restore();
         changed = false;
         channels = exporter.channels;
         length = exporter.audioData.length;
@@ -130,20 +220,24 @@ document.getElementById('applyEffects').addEventListener('click', function() {
             switch (effect.type) {
                 case "bitcrush":
                     let {rate, bits} = effect;
+                    if (bits >= 16) return;
+                    bits = Math.round(bits);
                     rate = rate * 2;
                     const precision = 32767 / Math.pow(2, bits);
-                    if (rate === 1) {
+                    if (rate === 0) {
+                        audioData.fill(0);
+                    } else if (rate === 1) {
                         for (let i = 0; i < length; i++) {
                             audioData[i] = Math.round(audioData[i] / precision) * precision;
                         }
                     } else {
                         if (Math.floor(rate) === rate) {
                             for (let i = 0; i < length; i++) {
-                                audioData[Math.floor(i / rate) * rate] = Math.round(audioData[i] / precision) * precision;
+                                audioData[i] = Math.round(audioData[Math.floor(i / rate) * rate] / precision) * precision;
                             }
                         } else {
                             for (let i = 0; i < length; i++) {
-                                audioData[Math.floor(Math.round(i / rate) * rate)] = Math.round(audioData[i] / precision) * precision;
+                                audioData[i] = Math.round(audioData[Math.floor(Math.round(i / rate) * rate)] / precision) * precision;
                             }
                         }
                     }
@@ -159,6 +253,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
         audioPlayer.src = audioUrl;
         audioPlayer.play();
     } else {
+        if (exporter) return;
         alert("Please upload an audio file first.");
     }
 });
