@@ -141,7 +141,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     const mult = currentJSON.rate * 2;
                     for (let i = 0; i < data.length; i += mult) {
                         x = data[i + 1];
-                        y = Math.round(Math.round(data[i] * precision) / precision);
+                        y = Math.round(Math.round(data[i] / precision) * precision);
                         data2 = data2 + "L " + x + "," + y + " ";
                     }
                     path2.setAttribute("d", data2);
