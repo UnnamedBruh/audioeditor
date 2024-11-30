@@ -194,7 +194,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     } else {
                         for (let i = 0; i < 400; i += 2) {
                             x = data[i + 1];
-                            y = (data[i] - m) * mult + m;
+                            y = (Math.abs((data[i] - m) * mult + m) % 200) * Math.sign(data[i]);
                             data2 = data2 + "L " + x + "," + y + " ";
                         }
                     }
@@ -233,7 +233,7 @@ document.getElementById('audioUpload').addEventListener('change', function(event
                 const buffer2 = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : null;
                 const audioData = new Int16Array(buffer1.length * buffer.numberOfChannels);
                 const length = buffer1.length;
-                const multiplier = 32767;
+                const multiplier = 32766;
                 if (buffer2) {
                     let j = 0;
                     try {
@@ -274,7 +274,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                     let {rate, bits} = effect;
                     if (bits > 16 && rate === 1) return;
                     bits = Math.min(Math.round(bits), 16);
-                    const precision = 32767 * Math.pow(2, -bits + 1);
+                    const precision = 32766 * Math.pow(2, -bits + 1);
                     if (bits === 0) {
                         audioData.fill(0);
                     } else if (rate === 1) {
