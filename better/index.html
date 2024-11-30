@@ -95,7 +95,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
         const center = document.createElement("center");
         effect.appendChild(center);
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        let currentJSON = {element: effect};
+        let currentJSON = {type: effects[index]};
         center.appendChild(svg);
         svg.setAttribute("width", "200");
         svg.setAttribute("height", "100");
@@ -170,10 +170,11 @@ document.getElementById('addEffect').addEventListener('click', function() {
         remove.onclick = function() {
             effectsAdded.splice(indexOfEffect, 1);
             effect.remove();
-	changed = true;
+	        changed = true;
         }
-	list.appendChild(effect);
+        list.appendChild(effect);
         effectsAdded.push(currentJSON);
+        changed = true;
     }
 });
 document.getElementById('audioUpload').addEventListener('change', function(event) {
