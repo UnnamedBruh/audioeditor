@@ -134,7 +134,6 @@ document.getElementById('addEffect').addEventListener('click', function() {
                 labelRate.for = uniqueID + "B";
                 rate.value = "1";
                 function updateBitcrushWave() {
-                    if (currentJSON.bits >= 8) return;
                     const precision = 100 / Math.pow(2, Math.round(currentJSON.bits));
                     let data2 = 'M 0,50 ';
                     const data = cacheBitcrushWaveForm;
@@ -229,8 +228,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                     let {rate, bits} = effect;
                     if (bits >= 16) return;
                     bits = Math.round(bits);
-                    rate = rate * 2;
-                    const precision = 32767 / Math.pow(2, bits);
+                    const precision = 32767 / (32767 / Math.pow(2, bits));
                     if (rate === 0) {
                         audioData.fill(0);
                     } else if (rate === 1) {
