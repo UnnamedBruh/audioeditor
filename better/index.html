@@ -40,7 +40,8 @@ class AudioExporter {
 	constructor(audioData, sampleRate, channels) {
 		this.audioData = audioData;
 		this.sampleRate = sampleRate;
-        this.channels = channels;
+        	this.channels = channels;
+		this.backup = Int16Array.from(audioData);
 	}
 	convertToWav(exp = "blob") {
 		const numChannels = this.channels, ch4 = -1, ch5 = 1, len = this.audioData.length;
@@ -72,15 +73,9 @@ class AudioExporter {
 			view.setUint8(offset + i, string.charCodeAt(i));
 		}
 	}
-	static sineWave(frequency, duration, sampleRate) {
-		const array = new Int16Array(Math.floor(duration * sampleRate));
-		const len = array.length, cache = 2 * Math.PI;
-		for (let i = 0; i < len; i++) {
-			array[i] = Math.round(Math.sin((cache * frequency * i) / sampleRate)) * 32767;
-		}
-		return new AudioExporter(array, sampleRate);
+	restore() {
+		this.audioData = Int16Array.from(this.backup);
 	}
-	version = 0;
 };
 let exporter, changed = false;
 const effects = ["bitcrush"], list = document.getElementById("effects");
