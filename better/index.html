@@ -260,7 +260,7 @@ document.getElementById('audioUpload').addEventListener('change', function(event
 });
 let perm = true;
 document.getElementById('applyEffects').addEventListener('click', function() {
-    perm = perm && alert("Note that the effects that are applied will not be permanent - applying the effects after changing them would only change the effects, and not actually apply them again.");
+    perm = perm && alert("Note that the effects that are applied will not be permanent - applying the effects after changing them would only change the effects' settings, and not the audio itself.");
     if (exporter && changed) {
         exporter.restore();
         changed = false;
