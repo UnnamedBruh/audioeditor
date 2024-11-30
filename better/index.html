@@ -263,7 +263,7 @@ document.getElementById('downloadWav').addEventListener('click', function() {
     if (exporter) {
         const wavBlob = document.getElementById('audioPlayer').src;
         const a = document.createElement('a');
-        a.href = url;
+        a.href = wavBlob;
         a.download = 'modified-audio.wav';
         a.click();
         URL.revokeObjectURL(url);
