@@ -233,13 +233,15 @@ document.getElementById('audioUpload').addEventListener('change', function(event
                 const buffer2 = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : null;
                 const audioData = new Int16Array(buffer1.length * buffer.numberOfChannels);
                 const length = buffer1.length;
-                const multiplier = 32766;
+                const multiplier = 32767;
                 if (buffer2) {
                     let j = 0;
                     try {
                         for (let i = 0; i < length; i++) {
-                            audioData[j++] = buffer1[i] * multiplier;
-                            audioData[j++] = buffer2[i] * multiplier;
+                            audioData[j] = buffer1[i] * multiplier;
+                            audioData[j] = audioData[j] === -32768 ? 32767 : audioData[j], j++;
+                            audioData[j] = buffer2[i] * multiplier;
+                            audioData[j] = audioData[j] === -32768 ? 32767 : audioData[j], j++;
                         }
                     } catch {
                         // I'm not going to worry about it, the processing must have been done anyway.
@@ -248,6 +250,7 @@ document.getElementById('audioUpload').addEventListener('change', function(event
                 } else {
                     for (let i = 0; i < length; i++) {
                         audioData[i] = buffer1[i] * multiplier;
+                        audioData[i] = audioData[i] === -32768 ? 32767 : audioData[i];
                     }
                 }
                 exporter = new AudioExporter(audioData, buffer.sampleRate, buffer2 ? 2 : 1);
@@ -274,7 +277,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                     let {rate, bits} = effect;
                     if (bits > 16 && rate === 1) return;
                     bits = Math.min(Math.round(bits), 16);
-                    const precision = 32766 * Math.pow(2, -bits + 1);
+                    const precision = 32767 * Math.pow(2, -bits + 1);
                     if (bits === 0) {
                         audioData.fill(0);
                     } else if (rate === 1) {
