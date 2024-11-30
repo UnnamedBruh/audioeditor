@@ -167,6 +167,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
         remove.onclick = function() {
             effectsAdded.splice(indexOfEffect, 1);
             effect.remove();
+	changed = true;
         }
 	list.appendChild(effect);
         effectsAdded.push(currentJSON);
@@ -182,7 +183,7 @@ document.getElementById('audioUpload').addEventListener('change', function(event
                 const buffer1 = buffer.getChannelData(0);
                 const buffer2 = (function(){try{return buffer.getChannelData(1)}catch{return null}})();
                 const audioData = new Int16Array(buffer1.length + (buffer2 ? buffer2.length : 0));
-                const length = Math.floor(buffer2 ? (audioData.length / 2) : audioData.length);
+                const length = buffer1.length;
                 const multiplier = 32767;
                 if (buffer2) {
                     let j = 0, i = 0;
