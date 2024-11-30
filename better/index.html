@@ -226,8 +226,8 @@ document.getElementById('applyEffects').addEventListener('click', function() {
             switch (effect.type) {
                 case "bitcrush":
                     let {rate, bits} = effect;
-                    if (bits >= 16) return;
-                    bits = Math.round(bits);
+                    if (bits >= 16 && rate === 1) return;
+                    bits = Math.min(Math.round(bits), 16);
                     const precision = 32767 * Math.pow(2, -bits + 1);
                     if (bits === 0) {
                         audioData.fill(0);
