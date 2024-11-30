@@ -82,7 +82,7 @@ class AudioExporter {
 	}
 	version = 0;
 };
-let exporter;
+let exporter, changed = false;
 const effects = ["bitcrush"], list = document.getElementById("effects");
 let applyEffect = "Type in a number to select an effect (e.g. ";
 // The first item is the Y position, the second item is the X position, and it repeats
@@ -202,12 +202,13 @@ document.getElementById('audioUpload').addEventListener('change', function(event
                 }
                 exporter = new AudioExporter(audioData, buffer1.sampleRate, buffer2 ? 2 : 1);
                 console.log("Audio loaded.");
+		changed = true;
             });
         };
         reader.readAsArrayBuffer(file);
     }
 });
-let changed = false, perm = true;
+let perm = true;
 document.getElementById('applyEffects').addEventListener('click', function() {
     perm = perm && alert("Note that the effects that are applied will not be permanent - applying the effects after changing them would only change the effects, and not actually apply them again.");
     if (exporter && changed) {
@@ -260,8 +261,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
 });
 document.getElementById('downloadWav').addEventListener('click', function() {
     if (exporter) {
-        const wavBlob = exporter.convertToWav('blob');
-        const url = URL.createObjectURL(wavBlob);
+        const wavBlob = document.getElementById('audioPlayer').src;
         const a = document.createElement('a');
         a.href = url;
         a.download = 'modified-audio.wav';
