@@ -228,8 +228,8 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                     let {rate, bits} = effect;
                     if (bits >= 16) return;
                     bits = Math.round(bits);
-                    const precision = 32767 / (32767 / Math.pow(2, bits));
-                    if (rate === 0) {
+                    const precision = 32767 * Math.pow(2, -bits + 1);
+                    if (bist === 0) {
                         audioData.fill(0);
                     } else if (rate === 1) {
                         for (let i = 0; i < length; i++) {
