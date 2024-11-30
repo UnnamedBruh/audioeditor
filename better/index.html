@@ -147,18 +147,16 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     path2.setAttribute("d", data2);
                 }
                 rate.oninput = function() {
-                    let bits = currentJSON.bits;
                     currentJSON.rate = rate.value ? Math.max(1, Math.abs(Number(rate.value))) : 1;
-                    if (bits > 16) {
-                        currentJSON.bits = 16;
-                    }
                     updateBitcrushWave();
-                    currentJSON.bits = bits;
                     changed = true;
                 }
                 bits.oninput = function() {
                     currentJSON.bits = bits.value ? Math.abs(Number(bits.value)) : 4;
-                    if (currentJSON.bits < 16) updateBitcrushWave();
+                    if (bits > 16) {
+                        currentJSON.bits = 16;
+                    }
+                    updateBitcrushWave();
                     changed = true;
                 }
                 updateBitcrushWave();
@@ -226,7 +224,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
             switch (effect.type) {
                 case "bitcrush":
                     let {rate, bits} = effect;
-                    if (bits >= 16 && rate === 1) return;
+                    if (bits > 16 && rate === 1) return;
                     bits = Math.min(Math.round(bits), 16);
                     const precision = 32767 * Math.pow(2, -bits + 1);
                     if (bits === 0) {
