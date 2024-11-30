@@ -182,7 +182,7 @@ document.getElementById('audioUpload').addEventListener('change', function(event
             audioContext.decodeAudioData(e.target.result, (buffer) => {
                 const buffer1 = buffer.getChannelData(0);
                 const buffer2 = (function(){try{return buffer.getChannelData(1)}catch{return null}})();
-                const audioData = new Int16Array(buffer1.length + (buffer2 ? buffer2.length : 0));
+                const audioData = new Int16Array(buffer1.length * (buffer2 ? 2 : 1));
                 const length = buffer1.length;
                 const multiplier = 32767;
                 if (buffer2) {
