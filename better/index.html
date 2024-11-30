@@ -134,7 +134,8 @@ document.getElementById('addEffect').addEventListener('click', function() {
                 labelRate.for = uniqueID + "B";
                 rate.value = "1";
                 function updateBitcrushWave() {
-                    const precision = 100 / Math.pow(2, currentJSON.bits);
+                    if (currentJSON.bits >= 8) return;
+                    const precision = 100 / Math.pow(2, Math.round(currentJSON.bits));
                     let data2 = 'M 0,50 ';
                     const data = cacheBitcrushWaveForm;
                     let x, y;
@@ -154,10 +155,12 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     }
                     updateBitcrushWave();
                     currentJSON.bits = bits;
+                    changed = true;
                 }
                 bits.oninput = function() {
                     currentJSON.bits = bits.value ? Math.abs(Number(bits.value)) : 4;
                     if (currentJSON.bits < 16) updateBitcrushWave();
+                    changed = true;
                 }
                 updateBitcrushWave();
         }
@@ -181,14 +184,14 @@ document.getElementById('audioUpload').addEventListener('change', function(event
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             audioContext.decodeAudioData(e.target.result, (buffer) => {
                 const buffer1 = buffer.getChannelData(0);
-                const buffer2 = (function(){try{return buffer.getChannelData(1)}catch{return null}})();
-                const audioData = new Int16Array(buffer1.length * (buffer2 ? 2 : 1));
+                const buffer2 = buffer.numberOfChannels > 1 ? buffer.getChannelData(1) : null;
+                const audioData = new Int16Array(buffer1.length * buffer.numberOfChannels);
                 const length = buffer1.length;
                 const multiplier = 32767;
                 if (buffer2) {
-                    let j = 0, i = 0;
+                    let j = 0;
                     try {
-                        for (; i < length; i++, j++) {
+                        for (let i = 0; i < length; i++) {
                             audioData[j++] = buffer1[i] * multiplier;
                             audioData[j++] = buffer2[i] * multiplier;
                         }
