@@ -45,7 +45,7 @@ class AudioExporter {
     }
     convertToWav(exp = "blob") {
         const numChannels = this.channels, ch4 = -1, ch5 = 1, len = this.audioData.length;
-        const len2 = len * 2;
+        const len2 = len * numChannels * 2;
         const buffer = new ArrayBuffer(44 + len2);
         const view = new DataView(buffer);
         this.writeString(view, 0, 'RIFF');
