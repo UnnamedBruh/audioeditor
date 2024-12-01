@@ -194,7 +194,7 @@ document.getElementById('addEffect').addEventListener('click', function() {
                     } else {
                         for (let i = 0; i < 400; i += 2) {
                             x = data[i + 1];
-                            y = (Math.abs((data[i] - m) * mult + m) % 200) * Math.sign(data[i]);
+                            y = (data[i] - m) * mult + m;
                             data2 = data2 + "L " + x + "," + y + " ";
                         }
                     }
@@ -238,8 +238,8 @@ document.getElementById('audioUpload').addEventListener('change', function(event
                     let j = 0;
                     try {
                         for (let i = 0; i < length; i++) {
-                            audioData[j] = buffer1[i] * multiplier;
-                            audioData[j] = buffer2[i] * multiplier;
+                            audioData[j++] = buffer1[i] * multiplier;
+                            audioData[j++] = buffer2[i] * multiplier;
                         }
                     } catch {
                         // I'm not going to worry about it, the processing must have been done anyway.
