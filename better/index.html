@@ -218,10 +218,10 @@ document.getElementById('addEffect').addEventListener('click', function() {
                 labelFrequency.textContent = "Frequency (Hz):";
                 frequency.id = uniqueID;
                 labelFrequency.for = uniqueID;
-                frequency.value = "600";
-                currentJSON.frequencyCutoff = 600;
+                frequency.value = "10000";
+                currentJSON.frequencyCutoff = 10000;
                 frequency.oninput = function() {
-                    currentJSON.frequencyCutoff = frequency.value ? Math.abs(Number(frequency.value)) : 600;
+                    currentJSON.frequencyCutoff = frequency.value ? Math.abs(Number(frequency.value)) : 10000;
                     changed = true;
                 }
             }
