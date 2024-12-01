@@ -94,6 +94,11 @@ document.getElementById('addEffect').addEventListener('click', function() {
         effect.classList.add("effect");
         const center = document.createElement("center");
         effect.appendChild(center);
+        const title = document.createElement("b");
+        const line = document.createElement("br");
+        center.appendChild(title);
+        center.appendChild(line);
+        title.textContent = effects[index];
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         let currentJSON = {type: effects[index]};
         center.appendChild(svg);
