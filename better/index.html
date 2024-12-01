@@ -331,7 +331,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                         array[i] = audioData[i] / dddd;
                     }
                     const outputSignal = [array[0]];
-                    let alpha = Math.exp(-2 * Math.PI * cutoffFrequency / exporter.sampleRate);
+                    let alpha = Math.exp(-2 * Math.PI * frequencyCutoff / exporter.sampleRate);
                     for (let i = 1; i < length; i++) {
                         outputSignal.push(alpha * (outputSignal[i - 1] + array[i] - array[i - 1]));
                     }
