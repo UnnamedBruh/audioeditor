@@ -37,45 +37,45 @@
     <script>
 let effectsAdded = [];
 class AudioExporter {
-	constructor(audioData, sampleRate, channels) {
-		this.audioData = audioData;
-		this.sampleRate = sampleRate;
-        	this.channels = channels;
-		this.backup = Int16Array.from(audioData);
-	}
-	convertToWav(exp = "blob") {
-		const numChannels = this.channels, ch4 = -1, ch5 = 1, len = this.audioData.length;
-		const len2 = len * 2;
-		const buffer = new ArrayBuffer(44 + len2);
-		const view = new DataView(buffer);
-		this.writeString(view, 0, 'RIFF');
-		view.setUint32(4, 36 + len2, true);
-		this.writeString(view, 8, 'WAVE');
-		this.writeString(view, 12, 'fmt ');
-		view.setUint32(16, 16, true);
-		view.setUint16(20, 1, true);
-		view.setUint16(22, numChannels, true);
-		view.setUint32(24, this.sampleRate, true);
-		view.setUint32(28, this.sampleRate * 2, true);
-		view.setUint16(32, 2, true);
-		view.setUint16(34, 16, true);
-		this.writeString(view, 36, 'data');
-		view.setUint32(40, len2, true);
-		let offset = 44;
-		for (let i = 0; i < len; i++) {
-			view.setInt16(offset, this.audioData[i], true);
-			offset += 2;
-		}
-		return exp === "blob" ? new Blob([view], { type: 'audio/wav' }) : exp === "dataview" ? view : undefined;
-	}
-	writeString(view, offset, string) {
-		for (let i = 0; i < string.length; i++) {
-			view.setUint8(offset + i, string.charCodeAt(i));
-		}
-	}
-	restore() {
-		this.audioData = Int16Array.from(this.backup);
-	}
+    constructor(audioData, sampleRate, channels) {
+        this.audioData = audioData;
+        this.sampleRate = sampleRate;
+        this.channels = channels;
+        this.backup = Int16Array.from(audioData);
+    }
+    convertToWav(exp = "blob") {
+        const numChannels = this.channels, ch4 = -1, ch5 = 1, len = this.audioData.length;
+        const len2 = len * 2;
+        const buffer = new ArrayBuffer(44 + len2);
+        const view = new DataView(buffer);
+        this.writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + len2, true);
+        this.writeString(view, 8, 'WAVE');
+        this.writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, numChannels, true);
+        view.setUint32(24, this.sampleRate, true);
+        view.setUint32(28, this.sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        this.writeString(view, 36, 'data');
+        view.setUint32(40, len2, true);
+        let offset = 44;
+        for (let i = 0; i < len; i++) {
+            view.setInt16(offset, this.audioData[i], true);
+            offset += 2;
+        }
+        return exp === "blob" ? new Blob([view], { type: 'audio/wav' }) : exp === "dataview" ? view : undefined;
+    }
+    writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
+    restore() {
+        this.audioData = Int16Array.from(this.backup);
+    }
 };
 let exporter, changed = false;
 const effects = ["bitcrush", "gain", "highpass"], list = document.getElementById("effects");
