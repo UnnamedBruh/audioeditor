@@ -330,10 +330,11 @@ document.getElementById('applyEffects').addEventListener('click', function() {
                     for (let i = 0; i < length; i++) {
                         array[i] = audioData[i] / dddd;
                     }
-                    const outputSignal = [array[0]];
+                    const outputSignal = new Float32Array(length);
+                    outputSignal[0] = array[0];
                     let alpha = Math.exp(-2 * Math.PI * frequencyCutoff / exporter.sampleRate);
                     for (let i = 1; i < length; i++) {
-                        outputSignal.push(alpha * (outputSignal[i - 1] + array[i] - array[i - 1]));
+                        outputSignal[i] = alpha * (outputSignal[i - 1] + array[i] - array[i - 1]);
                     }
                     array = 0;
                     // The array is no longer needed, so we garbage collect it, but in a very early way
