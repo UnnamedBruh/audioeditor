@@ -358,6 +358,7 @@ document.getElementById('applyEffects').addEventListener('click', function() {
         }
         audioPlayer.src = audioUrl;
         audioPlayer.play();
+        audioPlayer.onloadedmetadata = function() {};
         if (exporter.channels > 1) {
             const getInterval = setInterval(function() {
                 audioPlayer.duration = (exporter.audioData.length / exporter.channels) / exporter.sampleRate;
@@ -365,6 +366,9 @@ document.getElementById('applyEffects').addEventListener('click', function() {
             setTimeout(function() {
                 clearInterval(getInterval);
             }, (exporter.audioData.length / 4800) + 400);
+            audioPlayer.onloadedmetadata = function() {
+                audioPlayer.duration = (exporter.audioData.length / exporter.channels) / exporter.sampleRate;
+            }
         }
     } else {
         if (exporter) return;
