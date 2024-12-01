@@ -34,7 +34,7 @@
     <button id="applyEffects">Apply Effects</button>
     <button id="downloadWav">Download Sound as .WAV</button>
     <audio id="audioPlayer"></audio>
-    <input id="progressSlider" min="0" step="0.2" style="width: 100%" type="slider">
+    <input id="progressSlider" min="0" step="0.2" style="width: 100%" type="range">
     <a id="inSeconds" style="display: none"></a>
     <button id="togglePlayback">Toggle Playback</button>
     <script>
@@ -303,7 +303,7 @@ progress.oninput = function() {
     audioPlayer.play();
 }
 toggle.onclick = function() {
-    (audioPlayer.paused ? audio.play : audio.pause)();
+    (audioPlayer.paused ? audioPlayer.play : audioPlayer.pause)();
 }
 document.getElementById('applyEffects').addEventListener('click', function() {
     perm = perm && alert("Note that the effects that are applied will not be permanent - applying the effects after changing them would only change the effects' settings, and not the audio itself.");
