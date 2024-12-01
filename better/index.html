@@ -32,10 +32,14 @@
     <br><br>
     <div id="effects"></div>
     <button id="applyEffects">Apply Effects</button>
-    <button id="downloadWav">Download WAV</button>
-    <audio id="audioPlayer" controls></audio>
+    <button id="downloadWav">Download Sound as .WAV</button>
+    <audio id="audioPlayer"></audio>
+    <input id="progressSlider" min="0" step="0.2" style="width: 100%">
+    <a id="inSeconds" style="display: none"></a>
+    <button id="togglePlayback">Toggle Playback</button>
     <script>
 let effectsAdded = [];
+let progress = document.getElementById("progressSlider"), inSecs = document.getElementById("inSeconds"), toggle = document.getElementById("togglePlayback");
 class AudioExporter {
     constructor(audioData, sampleRate, channels) {
         this.audioData = audioData;
@@ -281,7 +285,26 @@ document.getElementById('audioUpload').addEventListener('change', function(event
         reader.readAsArrayBuffer(file);
     }
 });
-let perm = true;
+let perm = true, rewindTimeout = null;
+const audioPlayer = document.getElementById('audioPlayer');
+setInterval(function() {
+    progress.value = audioPlayer.currentTime;
+    progress.max = audioPlayer.duration;
+    progress.disabled = !audioPlayer.src;
+}, 100);
+progress.oninput = function() {
+    if (rewindTimeout) clearTimeout(rewindTimeout);
+    rewindTimeout = setTimeout(function() {
+        inSecs.style.display = "none";
+    }, 1000)
+    inSecs.style.display = "";
+    audioPlayer.currentTime = Number(progress.value);
+    inSecs.textContent = Number(audioPlayer.currentTime).toFixed(6);
+    audioPlayer.play();
+}
+toggle.onclick = function() {
+    (audioPlayer.paused ? audio.play : audio.pause)();
+}
 document.getElementById('applyEffects').addEventListener('click', function() {
     perm = perm && alert("Note that the effects that are applied will not be permanent - applying the effects after changing them would only change the effects' settings, and not the audio itself.");
     if (exporter && changed) {
@@ -352,7 +375,6 @@ document.getElementById('applyEffects').addEventListener('click', function() {
         // Update the audio player
         const wavBlob = exporter.convertToWav('blob');
         const audioUrl = URL.createObjectURL(wavBlob);
-        const audioPlayer = document.getElementById('audioPlayer');
         if (audioPlayer.src) {
             URL.revokeObjectURL(audioPlayer.src);
         }
